@@ -1,18 +1,18 @@
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.by import By
+
 
 class DriverService:
 
     @staticmethod
     def driver_options():
         options = Options()
-        options.headless = True
+        options.headless = False
         return options
 
     def driver(self):
-        return webdriver.Chrome(ChromeDriverManager().install(),
-                                options=self.driver_options())
+        return webdriver.Firefox(options=self.driver_options())
 
 
 driver_service = DriverService()

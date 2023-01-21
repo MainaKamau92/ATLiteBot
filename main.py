@@ -1,31 +1,23 @@
-import time
-import csv
+import logging
+import sys
+
+from services.auth_service import AuthenticationService
+from services.driver_service import driver_service
+from services.market_service import MarketService
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 def main():
-    pass
+    driver = driver_service.driver()
+    try:
+        mkrt_service = MarketService(driver)
+        mkrt_service.get_market_data()
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+    finally:
+        driver.quit()
+
 
 if __name__ == "__main__":
-
-
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-    driver.maximize_window()
-    driver.get("http://registeronline.nhif.or.ke/member/?home=1#")
-    time.sleep(5)
-    for page in range(500, 800):
-        print(f"Handling data for the page {page}")
-        driver.execute_script(f'return portal.list_group_members_paginate({page})')
-        time.sleep(10)
-        tr_elements = driver.find_elements(By.TAG_NAME, "tr")
-        # open a new CSV file for writing
-        with open("data.csv", "a", newline="") as csvfile:
-            # create a CSV writer
-            writer = csv.writer(csvfile)
-
-            # loop through the tr elements
-            for idx, tr in enumerate(tr_elements):
-                if idx == 0:
-                    continue
-                # write the text of each tr element to the CSV file
-                writer.writerow([tr.text])
-
+    main()
