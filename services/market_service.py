@@ -1,7 +1,7 @@
 import csv
 from services.auth_service import AuthenticationService
 from selenium.webdriver.common.by import By
-
+from datetime import datetime
 from services.utils import switch_frame
 
 
@@ -11,14 +11,16 @@ class MarketService:
         self.driver = driver
 
     @staticmethod
-    def write_to_csv_file(header_list, table_rows):
-        with open('table.csv', mode='w', newline='') as file:
+    def write_to_csv_file(header_list, table_rows, csv_name=f'data/market_data_{datetime.now().date()}.csv'):
+        with open(csv_name, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([i.strip() for i in header_list])
             # Iterate over the rows and write the data to the CSV file
             for row in table_rows:
                 cells = row.find_elements(By.TAG_NAME, "td")
                 data = [cell.text for cell in cells]
+                if len([i for i in data if i != '']) < 1:
+                    continue
                 writer.writerow(data)
 
     def get_market_data(self):
