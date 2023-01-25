@@ -1,8 +1,8 @@
-import time
 import csv
-from selenium.webdriver.common.by import By
+import time
 from datetime import datetime
 
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
 from services import XPATH_MAP

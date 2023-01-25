@@ -11,7 +11,7 @@ class AuthenticationService:
         self._login_url = "https://onlinetrading.ncbagroup.com/tradeweb/login.aspx"
         self._username = os.getenv("AUTH_USERNAME")
         self._password = os.getenv("AUTH_PASSWORD")
-        self.x_paths = XPATH_MAP['auth_service']
+        self.x_paths = XPATH_MAP.get('auth_service')
 
     def login_user(self):
         self.driver.get(self._login_url)

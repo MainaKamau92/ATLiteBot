@@ -14,8 +14,8 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 def main():
     driver = driver_service.driver()
     try:
-        portfolio_service = FinanceService(driver)
-        portfolio_service.execute_funds_transfer(1.00, remarks="REMARKS")
+        portfolio_service = MarketService(driver)
+        portfolio_service.get_market_data()
     except Exception as e:
         logging.error(f"An error occurred: {e}")
     finally:
