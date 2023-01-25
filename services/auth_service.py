@@ -17,3 +17,5 @@ class AuthenticationService:
         self.driver.find_element(By.XPATH, '//*[@id="txtLogin"]').send_keys(self._username)
         self.driver.find_element(By.XPATH, '//*[@id="txtPassword"]').send_keys(self._password)
         self.driver.find_element(By.XPATH, '//*[@id="btnLogin"]').click()
+        # wait for page to load
+        self.driver.implicitly_wait(10)

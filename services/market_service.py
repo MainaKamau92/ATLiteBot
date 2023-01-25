@@ -2,6 +2,8 @@ import csv
 from services.auth_service import AuthenticationService
 from selenium.webdriver.common.by import By
 
+from services.utils import switch_frame
+
 
 class MarketService:
 
@@ -22,17 +24,13 @@ class MarketService:
     def get_market_data(self):
         auth_service = AuthenticationService(self.driver)
         auth_service.login_user()
-        # wait for page to load
-        self.driver.implicitly_wait(10)
-        # get the iframe
-        iframe = self.driver.find_element(By.XPATH, '//*[@id="iMarketDetailsFrame"]')
-        # get market data from iframe
-        self.driver.switch_to.frame(iframe)
-        market_data_body = self.driver.find_element(By.XPATH, '/html/body/form/div[3]/div/div[65]/div[3]/div[2]/table/tbody')
+        driver = switch_frame(self.driver)
+        market_data_body = driver.find_element(By.XPATH, '/html/body/form/div[3]/div/div[65]/div[3]/div[2]/table/tbody')
         table_header = market_data_body.find_element(By.XPATH, '/html/body/form/div[3]/div/div[65]/div[3]/div[1]/div/table/thead')
         thead_content = table_header.find_elements(By.TAG_NAME, 'th')
         header_list = [i.find_element(By.CSS_SELECTOR, 'div').text for i in thead_content]
         table_rows = market_data_body.find_elements(By.TAG_NAME, "tr")
         # Write the data to a CSV file
         self.write_to_csv_file(header_list, table_rows)
+
 
