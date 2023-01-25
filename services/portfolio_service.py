@@ -2,6 +2,8 @@ from selenium.webdriver.common.by import By
 import time
 from datetime import datetime
 import csv
+
+from services import XPATH_MAP
 from services.auth_service import AuthenticationService
 from services.market_service import MarketService
 
@@ -10,6 +12,7 @@ class PortfolioService:
 
     def __init__(self, driver):
         self.driver = driver
+        self.x_path = XPATH_MAP.get('portfolio_service')
 
     @staticmethod
     def write_summary_to_csv(values):
@@ -23,22 +26,22 @@ class PortfolioService:
     def fetch_portfolio_data(self):
         auth_service = AuthenticationService(self.driver)
         auth_service.login_user()
-        self.driver.find_element(By.XPATH, '//*[@id="btnLinkPortfolioValuation"]').click()
+        self.driver.find_element(By.XPATH, f'{self.x_path.get("portfolio_valuation_btn")}').click()
         # wait for page to load
         time.sleep(5)
         # click button for details
-        self.driver.find_element(By.XPATH, '//*[@id="immpvssd"]').click()
+        self.driver.find_element(By.XPATH, f'{self.x_path.get("portfolio_details_btn")}').click()
         # fetch portfolio summary
-        portfolio_value_free = self.driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/div[2]/div[2]/div[1]/center/div[2]/table/tbody/tr[3]/td[2]')
-        unsettled_purchase_value = self.driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/div[2]/div[2]/div[1]/center/div[2]/table/tbody/tr[4]/td[2]')
-        portfolio_value_frozen = self.driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/div[2]/div[2]/div[1]/center/div[2]/table/tbody/tr[5]/td[2]/i')
+        portfolio_value_free = self.driver.find_element(By.XPATH, f'{self.x_path.get("portfolio_value_free_btn")}')
+        unsettled_purchase_value = self.driver.find_element(By.XPATH, f'{self.x_path.get("unsettled_purchase_value_btn")}')
+        portfolio_value_frozen = self.driver.find_element(By.XPATH, f'{self.x_path.get("portfolio_value_frozen_btn")}')
         values = [["Portfolio Value (Free)", portfolio_value_free.text],
                   ["Unsettled Purchase Value", unsettled_purchase_value.text],
                   ["Portfolio Value (Frozen)", portfolio_value_frozen.text]]
         self.write_summary_to_csv(values)
         # fetch owned securities detailed data
-        market_data_body = self.driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/div[2]/div[2]/div[1]/center/center/div/table/tbody')
-        table_header = market_data_body.find_element(By.XPATH, '/html/body/div[2]/div[1]/div[2]/div[2]/div[1]/center/center/div/table/thead')
+        market_data_body = self.driver.find_element(By.XPATH, f'{self.x_path.get("market_data_body")}')
+        table_header = market_data_body.find_element(By.XPATH, f'{self.x_path.get("table_header")}')
         thead_content = table_header.find_elements(By.TAG_NAME, 'th')
         header_list = [i.text for i in thead_content]
         table_rows = market_data_body.find_elements(By.TAG_NAME, "tr")
