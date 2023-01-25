@@ -5,6 +5,7 @@ from datetime import datetime
 
 from selenium.webdriver.support.select import Select
 
+from services import XPATH_MAP
 from services.auth_service import AuthenticationService
 
 
@@ -12,6 +13,7 @@ class FinanceService:
 
     def __init__(self, driver):
         self.driver = driver
+        self.x_paths = XPATH_MAP.get("finance_service")
 
     @staticmethod
     def write_funds_to_csv(values):
@@ -25,10 +27,10 @@ class FinanceService:
     def fetch_available_funds(self):
         auth_service = AuthenticationService(self.driver)
         auth_service.login_user()
-        self.driver.find_element(By.XPATH, '//*[@id="btnLinkAvailableFund"]').click()
+        self.driver.find_element(By.XPATH, f'{self.x_paths.get("available_funds_btn")}').click()
         # wait for page to load
         time.sleep(5)
-        market_data_body = self.driver.find_element(By.XPATH, '//*[@id="tbl_ATLiteAvailableFundsForNormal"]/tbody')
+        market_data_body = self.driver.find_element(By.XPATH, f'{self.x_paths.get("finance_data_table")}')
         table_rows = market_data_body.find_elements(By.TAG_NAME, "tr")
         final_values = []
         for row in table_rows[3:]:
@@ -43,17 +45,17 @@ class FinanceService:
     def execute_funds_transfer(self, amount, remarks=None):
         auth_service = AuthenticationService(self.driver)
         auth_service.login_user()
-        self.driver.find_element(By.XPATH, '//*[@id="btnLinkFundTransfer"]').click()
+        self.driver.find_element(By.XPATH, f'{self.x_paths.get("available_transfer_btn")}').click()
         # wait for page to load
         time.sleep(5)
-        self.driver.find_element(By.XPATH, '//*[@id="txtPayReqAmount"]').send_keys(amount)
+        self.driver.find_element(By.XPATH, f'{self.x_paths.get("transfer_amount_input")}').send_keys(amount)
         # select mode of payment
-        select_element = Select(self.driver.find_element(By.XPATH, '//*[@id="lstPayType"]'))
+        select_element = Select(self.driver.find_element(By.XPATH, f'{self.x_paths.get("pay_mode_select")}'))
         select_element.select_by_visible_text("MPESA")  # only supports MPESA for now
         if remarks:
-            self.driver.find_element(By.XPATH, '//*[@id="txtPayReqRemarks"]').send_keys(remarks)
-        self.driver.find_element(By.XPATH, '//*[@id="btnSubmit"]').click()
+            self.driver.find_element(By.XPATH, f'{self.x_paths.get("transfer_remarks_input")}').send_keys(remarks)
+        self.driver.find_element(By.XPATH, f'{self.x_paths.get("transfer_submit_btn")}').click()
         time.sleep(5)
         # confirm withdrawal
-        self.driver.find_element(By.XPATH, '//*[@id="btn_WithdrawSubmit"]').click()
+        self.driver.find_element(By.XPATH, f'{self.x_paths.get("transfer_confirm_btn")}').click()
         time.sleep(5)

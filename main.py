@@ -15,7 +15,7 @@ def main():
     driver = driver_service.driver()
     try:
         portfolio_service = FinanceService(driver)
-        portfolio_service.execute_funds_transfer(1.00, remarks="Testing")
+        portfolio_service.execute_funds_transfer(1.00, remarks="REMARKS")
     except Exception as e:
         logging.error(f"An error occurred: {e}")
     finally:
